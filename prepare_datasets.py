@@ -37,6 +37,7 @@ def get_set_of_datetimes(df: pd.DataFrame) -> set:
     return s
 
 def create_realtemp_df(path_vlinder: Path, s: set)->pd.DataFrame:
+    # create a new DF with the real temperature values to merge with the forecasting data
     file = Path(path_vlinder)
     df = pd.read_csv(file)
     count = 0
@@ -49,8 +50,6 @@ def create_realtemp_df(path_vlinder: Path, s: set)->pd.DataFrame:
                 new_row = pd.DataFrame({"real_temp": [round(row['temp'] + 273.15,2)]})
                 real_temps_df = pd.concat([real_temps_df,new_row], ignore_index=True)
     
-    # print(count)
-    # pprint.pprint(real_temps_df)
     return real_temps_df
 
 
@@ -67,6 +66,7 @@ def get_combined_df():
     return df
 
 def get_pruned_df():
+    # Get DataFrame of all forecasting data with measured vals of tempratures
     df = get_combined_df()
     for index, row in df.iterrows():
         df.at[index, 'time'] = mdates.date2num(df.at[index, 'time'])
