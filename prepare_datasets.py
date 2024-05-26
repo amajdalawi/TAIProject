@@ -73,6 +73,3 @@ def get_pruned_df():
     df = df.drop(columns=['number','longitude','latitude','cin'])
     df.to_csv("to_ignore/see.csv")
     return df
-
-# df = get_combined_df()
-# df.to_csv('wow.csv')
