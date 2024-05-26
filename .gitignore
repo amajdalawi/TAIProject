@@ -162,3 +162,5 @@ cython_debug/
 
 # new
 to_ignore/
+
+\~\$*
