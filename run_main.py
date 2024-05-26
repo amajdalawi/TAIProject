@@ -74,6 +74,11 @@ mlp_pipeline = make_pipeline(
     
 )
 
+ridge_estimator = ridge_pipeline.fit(X_train,Y_train)
+ridge_results = ridge_estimator.predict(X_test)
+
+knn_estimator = knn_pipeline.fit(X_train, Y_train)
+knn_results = knn_estimator.predict(X_test)
 
 # ridge_pipeline.fit(X_train, Y_train)
 # result = ridge_pipeline.predict(X_test)
