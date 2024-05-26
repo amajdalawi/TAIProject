@@ -80,28 +80,6 @@ ridge_results = ridge_estimator.predict(X_test)
 knn_estimator = knn_pipeline.fit(X_train, Y_train)
 knn_results = knn_estimator.predict(X_test)
 
-# ridge_pipeline.fit(X_train, Y_train)
-# result = ridge_pipeline.predict(X_test)
-
-# knn_regressor = knn_pipeline.fit(X_train, Y_train)
-# # pprint(knn_regressor.best_estimator)
-# results = knn_regressor.predict(X_test)
-# pprint(results)
-# pd.DataFrame(result).to_csv("result.csv")
-
-# knn = GridSearchCV(KNeighborsRegressor(), param_grid={
-#         'n_neighbors': [5,6,7,8,9,10]
-#     }, scoring=['neg_mean_squared_error'], refit='neg_mean_squared_error', cv=ts_cv).fit(X_train, Y_train)
-
-# pprint(knn.best_params_)
-# pprint(knn.best_score_)
-
-# r = GridSearchCV(estimator=Ridge(),param_grid={
-#         'alpha':[0,0.3,0.5,1.0,1.3,3,5]
-#     },scoring=["neg_mean_squared_error"],refit='neg_mean_squared_error', cv=ts_cv).fit(X_train, Y_train)
-
-# pprint(r.best_params_)
-# pprint(r.best_score_)
 
 
 real_temp_df = get_temperature_df()
