@@ -52,6 +52,9 @@ column_scaler = ColumnTransformer(
         ]
     )
 
+# pprint(prepared_df)
+# pprint(column_scaler.fit_transform(prepared_df))
+
 # Linear (Ridge) Regression Pipeline 
 ridge_pipeline = make_pipeline(
     column_scaler,
