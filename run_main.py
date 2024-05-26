@@ -68,19 +68,17 @@ knn_pipeline = make_pipeline(
     }, scoring=['neg_mean_squared_error'], refit='neg_mean_squared_error', cv=ts_cv)
 )
 
-# Multiple Layer Perceptron Regressor
-mlp_pipeline = make_pipeline(
-    ColumnTransformer(MinMaxScaler()),
-    
-)
 
 ridge_estimator = ridge_pipeline.fit(X_train,Y_train)
 ridge_results = ridge_estimator.predict(X_test)
+
 
 knn_estimator = knn_pipeline.fit(X_train, Y_train)
 knn_results = knn_estimator.predict(X_test)
 
 
+knn_df = pd.DataFrame(knn_results, columns=['knn_results'])
+ridge_df = pd.DataFrame(ridge_results, columns=['ridge_results'])
 # get temp columns and rename time to measured_time
 real_temp_df = get_temperature_df()
 real_temp_df = real_temp_df.rename(columns={'time':'measured_time'})
@@ -93,14 +91,18 @@ cols = [cols[-1]] + cols[:-1]
 real_temp_df = real_temp_df[cols]
 
 # compute mean and group by time
+real_temp_df = pd.concat([real_temp_df, knn_df, ridge_df], axis=1)
 real_temp_df = real_temp_df.groupby('measured_time').mean()
 real_temp_df.reset_index(inplace=True)
 pprint(real_temp_df)
 # real_temp_df = real_temp_df.reset_index()
 
 #for debugging
-real_temp_df.to_csv('to_ignore/whatshappening.csv')
+# real_temp_df.to_csv('to_ignore/whatshappening.csv')
 
-# plt.plot(real_temp_df['measured_time'], real_temp_df['t2m'])
-# plt.plot(real_temp_df['measured_time'], real_temp_df['real_temp'])
-# plt.show()
+plt.plot(real_temp_df['measured_time'], real_temp_df['t2m'])
+plt.plot(real_temp_df['measured_time'], real_temp_df['real_temp'])
+plt.plot(real_temp_df['measured_time'], real_temp_df['knn_results'])
+plt.plot(real_temp_df['measured_time'], real_temp_df['ridge_results'])
+plt.plot(real_temp_df['measured_time'], real_temp_df['mlp_results'])
+plt.show()
