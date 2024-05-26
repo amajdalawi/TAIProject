@@ -81,20 +81,18 @@ knn_estimator = knn_pipeline.fit(X_train, Y_train)
 knn_results = knn_estimator.predict(X_test)
 
 
-
+# get temp columns and rename time to measured_time
 real_temp_df = get_temperature_df()
 real_temp_df = real_temp_df.rename(columns={'time':'measured_time'})
-pprint(real_temp_df)
 
+# reorder columns
 cols = real_temp_df.columns.tolist()
-
 # Move the last column to the first position
 cols = [cols[-1]] + cols[:-1]
-
-# Reorder the DataFrame
+# reorder df
 real_temp_df = real_temp_df[cols]
-# pprint(real_temp_df)
-pprint(real_temp_df)
+
+# compute mean and group by time
 real_temp_df = real_temp_df.groupby('measured_time').mean()
 real_temp_df.reset_index(inplace=True)
 pprint(real_temp_df)
