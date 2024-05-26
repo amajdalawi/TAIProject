@@ -11,3 +11,5 @@ Stages of project will be:
 7. Plot stuff up
 
 DONE
+
+reqs: scikit-learn matplotlib pandas

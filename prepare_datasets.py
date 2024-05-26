@@ -24,3 +24,14 @@ def forecast_dataset():
     # pprint.pprint(df_final)
     # df_final.to_csv('./heh.csv')
     return df_final
+
+def get_set_of_datetimes(df):
+    # function taht takes a dataframe as input (usually the dataframe comprising the forecast) and gets teh datetimes and appends them into a set
+    s = set()
+    for dt in df['time']:
+        s.add(dt)
+    # pprint.pprint(s)
+    return s
+
+
+get_set_of_datetimes(forecast_dataset())
