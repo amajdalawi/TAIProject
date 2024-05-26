@@ -2,7 +2,7 @@ This is the first commit of the readme
 
 
 Stages of project will be:
-1. Prepare dataset by merging all the training data csv files
+1. Prepare dataset by merging all the training data csv files [DONE]
 2. Prepare the pipelines
 3. Define the metrics used to analyze the data (MSE)
 4. Define a few parameters for finding the best hyperparameters (for KNN, RandomForset, MLP, SVM)
