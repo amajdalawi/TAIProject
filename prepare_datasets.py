@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 import re
 import pprint
-
+import matplotlib.dates as mdates 
 
 resources_folder = Path("./resources/")
 
@@ -58,13 +58,19 @@ def get_combined_df():
     df = forecast_dataset()
     s = get_set_of_datetimes(df)
     real_temps_df = create_realtemp_df("resources\Vlinder_2024.csv",s)
+    # concat real_temp values to the larger forecast df
     df['real_temp'] = real_temps_df['real_temp']
+    #turn time into numerical value
+    df['time'] = pd.to_datetime(df['time'])
+    for index, row in df.iterrows():
+        df.at[index, 'time'] = mdates.date2num(df.at[index, 'time'])
     # pprint.pprint(df)
     return df
 
 def get_pruned_df():
     df = get_combined_df()
     df = df.drop(columns=['number','longitude','latitude','cin'])
+    df.to_csv("see.csv")
     return df
 
 # df = get_combined_df()
