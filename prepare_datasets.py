@@ -38,6 +38,34 @@ def get_set_of_datetimes(df: pd.DataFrame) -> set:
 
 def create_realtemp_df(path_vlinder: Path, s: set)->pd.DataFrame:
     file = Path(path_vlinder)
+    df = pd.read_csv(file)
+    count = 0
+    real_temps_df = pd.DataFrame(columns=['real_temp'])
+    for index, row in df.iterrows():
+        if row['datetime'] in s:
+            # print(f"Date: {row['datetime']} found and its temp is {row['temp']}")
+            count += 1
+            for _ in range(0,50):
+                new_row = pd.DataFrame({"real_temp": [round(row['temp'] + 273.15,2)]})
+                real_temps_df = pd.concat([real_temps_df,new_row], ignore_index=True)
+    
+    # print(count)
+    # pprint.pprint(real_temps_df)
+    return real_temps_df
 
 
-get_set_of_datetimes(forecast_dataset())
+def get_combined_df():
+    df = forecast_dataset()
+    s = get_set_of_datetimes(df)
+    real_temps_df = create_realtemp_df("resources\Vlinder_2024.csv",s)
+    df['real_temp'] = real_temps_df['real_temp']
+    # pprint.pprint(df)
+    return df
+
+def get_pruned_df():
+    df = get_combined_df()
+    df = df.drop(columns=['number','longitude','latitude','cin'])
+    return df
+
+# df = get_combined_df()
+# df.to_csv('wow.csv')
