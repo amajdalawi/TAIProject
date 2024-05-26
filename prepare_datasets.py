@@ -62,15 +62,16 @@ def get_combined_df():
     df['real_temp'] = real_temps_df['real_temp']
     #turn time into numerical value
     df['time'] = pd.to_datetime(df['time'])
-    for index, row in df.iterrows():
-        df.at[index, 'time'] = mdates.date2num(df.at[index, 'time'])
+    
     # pprint.pprint(df)
     return df
 
 def get_pruned_df():
     df = get_combined_df()
+    for index, row in df.iterrows():
+        df.at[index, 'time'] = mdates.date2num(df.at[index, 'time'])
     df = df.drop(columns=['number','longitude','latitude','cin'])
-    df.to_csv("see.csv")
+    df.to_csv("to_ignore/see.csv")
     return df
 
 # df = get_combined_df()
