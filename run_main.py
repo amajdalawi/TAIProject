@@ -1,3 +1,5 @@
+import matplotlib.pylab
+import matplotlib.pyplot
 import sklearn
 import sklearn.pipeline
 from prepare_datasets import get_pruned_df, get_combined_df
@@ -14,7 +16,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 
-
+import matplotlib.pyplot as plt
 import pandas as pd
 
 prepared_df = get_pruned_df()
@@ -37,10 +39,6 @@ def get_temperature_df(df: pd.DataFrame = prepared_df, rows_from_last: int = -10
     df.to_csv("to_ignore/hmm.csv")
     # pprint(df)
     return df
-    
-
-    return df
-l = get_temperature_df()
 
 # columns in the dataframe to scale their values
 columns_to_scale = ['cape','sp','tcw','sshf','slhf','msl','u10','v10','d2m','ssr','str','ttr','sund','sm','st','sd','sf','tcc','tp','mx2t6','mn2t6']
@@ -99,3 +97,29 @@ mlp_pipeline = make_pipeline(
 
 # pprint(r.best_params_)
 # pprint(r.best_score_)
+
+
+real_temp_df = get_temperature_df()
+real_temp_df = real_temp_df.rename(columns={'time':'measured_time'})
+pprint(real_temp_df)
+
+cols = real_temp_df.columns.tolist()
+
+# Move the last column to the first position
+cols = [cols[-1]] + cols[:-1]
+
+# Reorder the DataFrame
+real_temp_df = real_temp_df[cols]
+# pprint(real_temp_df)
+pprint(real_temp_df)
+real_temp_df = real_temp_df.groupby('measured_time').mean()
+real_temp_df.reset_index(inplace=True)
+pprint(real_temp_df)
+# real_temp_df = real_temp_df.reset_index()
+
+#for debugging
+real_temp_df.to_csv('to_ignore/whatshappening.csv')
+
+# plt.plot(real_temp_df['measured_time'], real_temp_df['t2m'])
+# plt.plot(real_temp_df['measured_time'], real_temp_df['real_temp'])
+# plt.show()
