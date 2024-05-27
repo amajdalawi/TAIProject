@@ -71,7 +71,7 @@ knn_pipeline = make_pipeline(
 randomforest_pipeline = make_pipeline(
         column_scaler,
         GridSearchCV(RandomForestRegressor(n_jobs=-1), param_grid={
-            'max_features':[0,0.7,1],
+            'max_features':[0.1,0.7,1],
             'n_estimators': [50,100]
         }, scoring=['neg_mean_squared_error'], refit='neg_mean_squared_error', cv=ts_cv)
     )
