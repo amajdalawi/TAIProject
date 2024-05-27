@@ -109,6 +109,7 @@ real_temp_df.reset_index(inplace=True)
 
 
 # plotting the results
+plt.figure(figsize=(12,8))
 plt.plot(real_temp_df['measured_time'], real_temp_df['t2m'], color='red',marker='o',label='forecast_vals',linewidth='0.5')
 plt.plot(real_temp_df['measured_time'], real_temp_df['real_temp'], color='black',marker='o',label='real_vals', linestyle='dashed')
 plt.plot(real_temp_df['measured_time'], real_temp_df['knn_results'], color='blue',marker='o',label='knn_predictions')
