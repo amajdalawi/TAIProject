@@ -19,13 +19,14 @@ from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
+# get the DataFrame with the measured vals of the temperature combined and unnecessary columns removed
 prepared_df = get_pruned_df()
-# pprint(prepared_df)
 X = prepared_df.drop(columns=['real_temp'])
 Y = prepared_df['real_temp']
+
 # make test data as last week
 X_train, X_test, Y_train, Y_test = train_test_split(X,Y , shuffle=False, random_state=0, test_size=1047)
-# pprint(X_train)
 
 # for future plotting and calculating predicted average arrays:
 def get_temperature_df(df: pd.DataFrame = prepared_df, rows_from_last: int = -1047):
@@ -33,14 +34,11 @@ def get_temperature_df(df: pd.DataFrame = prepared_df, rows_from_last: int = -10
     df = df[['real_temp','t2m']]
     original_df = get_combined_df()
     original_df = original_df[['time']].iloc[rows_from_last:].reset_index(drop=True)
-    # pprint(len(original_df))
-    # pprint(len(df))
     df = pd.concat([df,original_df], axis=1)
     df.to_csv("to_ignore/hmm.csv")
-    # pprint(df)
     return df
 
-# columns in the dataframe to scale their values
+# columns in the dataframe defined to scale/normalize their values 
 columns_to_scale = ['cape','sp','tcw','sshf','slhf','msl','u10','v10','d2m','ssr','str','ttr','sund','sm','st','sd','sf','tcc','tp','mx2t6','mn2t6']
 
 # Time-series-based cross-validator
@@ -52,8 +50,6 @@ column_scaler = ColumnTransformer(
         ]
     )
 
-# pprint(prepared_df)
-# pprint(column_scaler.fit_transform(prepared_df))
 
 # Linear (Ridge) Regression Pipeline 
 ridge_pipeline = make_pipeline(
@@ -71,17 +67,18 @@ knn_pipeline = make_pipeline(
     }, scoring=['neg_mean_squared_error'], refit='neg_mean_squared_error', cv=ts_cv)
 )
 
+# RandomForest Regressor Pipeline
 randomforest_pipeline = make_pipeline(
         column_scaler,
         GridSearchCV(RandomForestRegressor(n_jobs=-1), param_grid={
-            'max_features':[0,0.3,0.5,0.7,1],
-            'n_estimators': [50,100,500]
+            'max_features':[0,0.7,1],
+            'n_estimators': [50,100]
         }, scoring=['neg_mean_squared_error'], refit='neg_mean_squared_error', cv=ts_cv)
     )
 
+# Fit the estimators to the training data and predict the target values using the test data after validation has finished
 ridge_estimator = ridge_pipeline.fit(X_train,Y_train)
 ridge_results = ridge_estimator.predict(X_test)
-
 
 knn_estimator = knn_pipeline.fit(X_train, Y_train)
 knn_results = knn_estimator.predict(X_test)
@@ -89,9 +86,11 @@ knn_results = knn_estimator.predict(X_test)
 rf_estimator = randomforest_pipeline.fit(X_train, Y_train)
 rf_results = rf_estimator.predict(X_test)
 
+# convert ndarray results to dataframe
 knn_df = pd.DataFrame(knn_results, columns=['knn_results'])
 ridge_df = pd.DataFrame(ridge_results, columns=['ridge_results'])
 rf_df = pd.DataFrame(rf_results, columns=['randomforest_results'])
+
 # get temp columns and rename time to measured_time
 real_temp_df = get_temperature_df()
 real_temp_df = real_temp_df.rename(columns={'time':'measured_time'})
@@ -107,12 +106,9 @@ real_temp_df = real_temp_df[cols]
 real_temp_df = pd.concat([real_temp_df, knn_df, ridge_df, rf_df], axis=1)
 real_temp_df = real_temp_df.groupby('measured_time').mean()
 real_temp_df.reset_index(inplace=True)
-pprint(real_temp_df)
-# real_temp_df = real_temp_df.reset_index()
 
-#for debugging
-# real_temp_df.to_csv('to_ignore/whatshappening.csv')
 
+# plotting the results
 plt.plot(real_temp_df['measured_time'], real_temp_df['t2m'], color='red',marker='o',label='forecast_vals',linewidth='0.5')
 plt.plot(real_temp_df['measured_time'], real_temp_df['real_temp'], color='black',marker='o',label='real_vals', linestyle='dashed')
 plt.plot(real_temp_df['measured_time'], real_temp_df['knn_results'], color='blue',marker='o',label='knn_predictions')
@@ -122,5 +118,4 @@ plt.legend(loc='upper left')
 plt.title("Measured Values of Temp vs Predicted (last week of April)")
 plt.xlabel("Datetime")
 plt.ylabel("Temperature [Kelvin]")
-plt.figure(figsize=(12,6))
 plt.show()
